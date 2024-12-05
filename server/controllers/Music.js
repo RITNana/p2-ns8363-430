@@ -32,7 +32,7 @@ const makeMusic = async (req, res) => {
   }
 };
 
-const getSongs = async (req, res) => {
+const getSongs = async (req, res) => { 
   try {
     const query = { owner: req.session.account._id };
     const docs = await Music.find(query);
