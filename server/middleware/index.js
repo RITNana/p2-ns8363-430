@@ -14,7 +14,7 @@ const requiresLogin = (req, res, next) => {
 // check if user is already logged in and redirects them to app
 const requiresLogout = (req, res, next) => {
   if (req.session.account) {
-    return res.redirect('/reviewer');
+    return res.redirect('/main');
   }
 
   return next();

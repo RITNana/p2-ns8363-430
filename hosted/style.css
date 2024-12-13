@@ -70,7 +70,7 @@ nav:nth-child(1) {
     background-color: #1ED760;
 }
 
-.reviewForm {
+#makeSong {
     border: 2px solid #ffff;
     height: 35px;
     width: 1530px;
@@ -86,24 +86,24 @@ nav:nth-child(1) {
 
 
 
-.reviewForm label,
-.reviewForm input[type=text],
-.reviewForm input[type=number],
-.makeReviewSubmit {
+.homeForm label,
+.homeForm input[type=text],
+.homeForm input[type=number],
+.makeSongSubmit {
     display: inline-block;
     margin-right: 8px;
     margin-left: 10px;
 }
 
-.reviewForm label {
+.homeForm label {
     font-size: 1.2em;
     color: white;
     align-self: center
         /* Vertically center labels */
 }
 
-.reviewForm input[type=text],
-.reviewForm input[type=number] {
+.homeForm input[type=text],
+.homeForm input[type=number] {
     padding: 5px;
     border-radius: 4px;
 }
@@ -112,7 +112,7 @@ nav:nth-child(1) {
 
 
 
-.makeReviewSubmit {
+.makeSongSubmit {
     transition: background-color 0.4s ease;
     display: inline;
     width: 120px;
@@ -127,14 +127,14 @@ nav:nth-child(1) {
     align-self: center;
 }
 
-.makeReviewSubmit:link,
-.makeReviewSubmit:visited,
-.makeReviewSubmit:hover,
-.makeReviewSubmit:active {
+.makeSongSubmit:link,
+.makeSongSubmit:visited,
+.makeSongSubmit:hover,
+.makeSongSubmit:active {
     color: white;
 }
 
-.makeReviewSubmit:hover {
+.makeSongSubmit:hover {
     transition: background-color 0.4s ease;
     background-color: #1ED760;
 }
@@ -267,14 +267,13 @@ nav:nth-child(1) {
 #songs {
     width: 40%;
     min-width: 400px;
-    /* border: 2px solid #55acee; */
     border-radius: 4px;
     margin: 0 auto;
     margin-top: 100px;
 }
 
 .song {
-    flex: 0 0 30%;
+    flex: 0 1 30%;
     margin: 10px;
     border: 2px solid #1ED760;
     background-color: black;
@@ -350,6 +349,8 @@ h3.musicGenre{
     padding-right: 40px;
     font-size: 1.2em;
 }
+
+
 
 .likeButton{
     float: left;

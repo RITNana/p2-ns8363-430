@@ -6,14 +6,14 @@ const setName = (name) => _.escape(name).trim();
 const MusicSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
     set: setName,
   },
   artist: {
     type: String,
-    required: true,
-    trime: true,
+    required: false,
+    trim: true,
   },
 
   album: {
@@ -24,9 +24,20 @@ const MusicSchema = new mongoose.Schema({
 
   genre: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
   },
+
+  spotifyId: {
+    type: String,
+    unique: true,
+  },
+
+  coverArt: {
+    type: String,
+    default: '',
+  },
+
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
@@ -40,6 +51,8 @@ MusicSchema.statics.toAPI = (doc) => ({
   artist: doc.artist,
   album: doc.album,
   genre: doc.genre,
+  spotifyId: doc.spotifyId,
+  coverArt: doc.coverArt,
 });
 
 const MusicModel = mongoose.model('Music', MusicSchema);

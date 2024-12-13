@@ -33,6 +33,12 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  reviews: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Review',
+  },
+
   createdDate: {
     type: Date,
     default: Date.now,
@@ -42,6 +48,7 @@ const AccountSchema = new mongoose.Schema({
 // Converts a doc to something we can store in redis later on.
 AccountSchema.statics.toAPI = (doc) => ({
   username: doc.username,
+  reviews: doc.reviews,
   _id: doc._id,
 });
 

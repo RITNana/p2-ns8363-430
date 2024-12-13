@@ -4,8 +4,9 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    app: './client/reviewer.jsx',
+    app: './client/main.jsx',
     login: './client/login.jsx',
+    preference: './client/preferences.jsx'
   },
   module: {
     rules: [
