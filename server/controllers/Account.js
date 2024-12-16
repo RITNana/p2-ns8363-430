@@ -4,13 +4,13 @@ const { Account } = models;
 
 // render in all of our pages
 const loginPage = (req, res) => res.render('login');
-// const aboutPage = (req, res) => res.render('about')
 
 const logout = (req, res) => {
   req.session.destroy();
   res.redirect('/');
 };
 
+// function for login authentification
 const login = (req, res) => {
   const username = `${req.body.username}`;
   const pass = `${req.body.pass}`;
@@ -62,11 +62,11 @@ const signup = async (req, res) => {
   }
 };
 
+// export our functions
 module.exports = {
   loginPage,
-  // signupPage,
   login,
   logout,
   signup,
-//  aboutPage
+
 };

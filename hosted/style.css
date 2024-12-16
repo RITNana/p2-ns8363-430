@@ -243,10 +243,9 @@ nav:nth-child(1) {
 .musicList {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 5px;
     width: 100%;
-    /* padding: 10px; */
     background-color: #1ED760;
     border: 2px solid #1F2421;
     border-radius: 15px;
@@ -273,15 +272,16 @@ nav:nth-child(1) {
 }
 
 .song {
-    flex: 0 1 30%;
-    margin: 10px;
+    flex: 1 1 150px;
+    margin: 5px;
     border: 2px solid #1ED760;
     background-color: black;
     color: white;
     border-radius: 20px;
     padding: 10px;
-    min-height:120px;
+    min-height: 120px;
     overflow: hidden;
+    max-width: 80%;
 }
 
 
@@ -332,27 +332,16 @@ h3.songArtist {
     font-size: 1.2em;
 }
 
-h3.songAlbum{
+h3.songAlbum {
     float: left;
     text-align: left;
     width: 100px;
     font-weight: bold;
-    padding-right: 40px;
+    padding-right: 30px;
     font-size: 1.2em;
 }
 
-h3.musicGenre{
-    float: left;
-    text-align: left;
-    width: 100px;
-    font-weight: bold;
-    padding-right: 40px;
-    font-size: 1.2em;
-}
-
-
-
-.likeButton{
+.likeButton {
     float: left;
     width: 100px;
     background-color: rgb(26, 181, 26);
@@ -361,7 +350,7 @@ h3.musicGenre{
     border-radius: 5px;
 }
 
-.dislikeButton{
+.dislikeButton {
     float: left;
     width: 100px;
     background-color: rgb(176, 42, 42);
@@ -369,7 +358,13 @@ h3.musicGenre{
     border-radius: 5px;
 }
 
-
+.reviewBtn {
+    float: left;
+    width: 100px;
+    background-color: rgb(65, 65, 65);
+    color: white;
+    border-radius: 5px;
+}
 
 .song:first-child {
     margin-top: 10px;
@@ -378,3 +373,12 @@ h3.musicGenre{
 .song:last-child {
     margin-bottom: 10px;
 }
+
+.submitBtn {
+    padding: 10px
+}
+
+.songRating {
+    padding: 10px;
+}
+

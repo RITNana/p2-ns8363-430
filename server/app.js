@@ -22,6 +22,7 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const dbURI = process.env.MONGODB_URI || require('../mongo-connection.js');
 
+// connect to our database
 mongoose.connect(dbURI).catch((err) => {
   if (err) {
     console.log('Could not connect to database');
@@ -29,6 +30,7 @@ mongoose.connect(dbURI).catch((err) => {
   }
 });
 
+// connect to Redis
 const redisClient = redis.createClient({
   url: process.env.REDISCLOUD_URL,
 });

@@ -1,97 +1,64 @@
+// Declare SpotifyWebAPI function node
+// Declare models variable for server side configuration for Music.js
+
 const SpotifyWebAPI = require('spotify-web-api-node');
 const models = require('../models');
 
 const { Music } = models;
 
+// requires clientId, client secret and redirect uro
 const spotifyApi = new SpotifyWebAPI({
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
   redirectUri: process.env.REDIRECT_URL,
 });
 
+// render in our song and preference pages
 const songPage = async (req, res) => res.render('app');
 
-const preferencePage = async(req, res) => res.render('preferences')
+const preferencePage = async (req, res) => res.render('preferences');
 
-// const searchLocalMusic = async (req, res) => {
-//   const title = req.query.title;
-//   const artist = req.query.artist;
-//   const album = req.query.album;
-//   const game = req.query.game;
-
-//   if(title) query.title = { $regex: title, $options: 'i' }
-//   if (artist) query.artist = { $regex: artist, $options: 'i'}
-//   if (album) query.album = { $regex: album, $options: 'i'}
-//   if (game) query.game = { $regex: game, $options: 'i'}
-
-//   try{
-//     const songs = await Music.find(query)
-//     res.json({ songs });
-
-//   } catch(err){
-//     return res.status(500).json({ error: 'Error getting songs'})
-//   }
-// }
-
-// const makeMusic = async (req, res) => {
-//   if (!req.body.title || !req.body.artist || !req.body.genre) {
-//     return res.status(500).json({ error: 'title, artist, and genre are required' });
-//   }
-
-//   const musicData = {
-//     title: req.body.title,
-//     artist: req.body.artist,
-//     album: req.body.album,
-//     genre: req.body.genre,
-//     owner: req.session.account._id,
-//   };
-
-//   try {
-//     const newMusic = new Music(musicData);
-//     await newMusic.save();
-//     return res.status(201).json({
-//       title: newMusic.title, 
-// artist: newMusic.artist, 
-// album: newMusic.album, 
-// genre: newMusic.genre,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     if (err.code === 11000) {
-//       return res.status(500).json({ error: 'Music review already exists' });
-//     }
-//     return res.status(500).json({ error: ' an error occured making review!' });
-//   }
-// }
-
+// ATTEMPT
+// Get the songs that are liked and disliked by user
 const getSongs = async (req, res) => {
   try {
     const query = { owner: req.session.account._id };
-    const docs = await Music.find(query);
 
-    return res.json({ songs: docs });
+    // Check if 'status' parameter is provided in the request
+    if (req.query.status) {
+      if (req.query.status === 'liked') {
+        query.liked = true;
+      } else if (req.query.status === 'disliked') {
+        query.disliked = true;
+      }
+    }
+    const docs = await Music.find(query);
+    return res.json({ songs: docs }); // return the received data for docs
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: 'Error retrieving songs!' });
+    return res.status(400).json({ error: 'Error retrieving songs!' });
   }
 };
 
-const spotifyLogin = async (req, res) => {
+// create function for Spotify Authorization Log In
+const spotifyLogin = (req, res) => {
   const scopes = ['user-read-private', 'user-read-email', 'user-read-playback-state', 'user-modify-playback-state'];
   return res.redirect(spotifyApi.createAuthorizeURL(scopes));
 };
 
+// Callback function to confirm successful authorization
+// Code Source: https://www.youtube.com/watch?v=TN1uvgAyxE0
 const spotifyCallBack = async (req, res) => {
   const { error } = req.query;
   const { code } = req.query;
 
   if (error) {
     console.log('Error!', error);
-    return res.status(500).json(`Error: ${error}`);
+    return res.status(400).json(`Error: ${error}`);
   }
 
   try {
-    console.log(`Authorization code received: ${code}`);
+    console.log(`Authorization code received: ${code}`); // required
 
     const data = await spotifyApi.authorizationCodeGrant(code);
     const accessToken = data.body.access_token;
@@ -105,64 +72,58 @@ const spotifyCallBack = async (req, res) => {
     res.redirect('/main');
 
     setInterval(async () => {
-      const data = await spotifyApi.refreshAccessToken();
-      const accessTokenRefreshed = data.body.access_token;
+      const refreshData = await spotifyApi.refreshAccessToken();
+      const accessTokenRefreshed = refreshData.body.access_token;
       spotifyApi.setAccessToken(accessTokenRefreshed);
     }, (expiresIn / 2) * 1000);
   } catch (err) {
-    console.log('Error', error);
-    return res.status(500).json({ error: 'Error getting tokens!' });
+    console.log('Error', err);
   }
+  return res.status(400).json({ error: 'Error getting tokens!' });
 };
 
+// search the Spotify API for tracks based on title, artist, or album
+// utilize the searchTracks propety passing in our query params
 const searchSpotifyTracks = async (req, res) => {
   const {
-    title, artist, album, genre,
+    title, artist, album,
   } = req.query;
   let q = '';
-  if (title) q += `track:${title}`;
-  if (artist) q += `artist:${artist}`;
-  if (album) q += `album:${album}`;
-  if (genre) q += `genre:${genre}`;
+  if (title) q += `track:${title} `;
+  if (artist) q += `artist:${artist} `;
+  if (album) q += `album:${album} `;
+
+  q = q.trim();
+
   try {
-    const searchData = await spotifyApi.searchTracks(q.trim());
-    console.log("spotify search data", searchData.body)
+    const searchData = await spotifyApi.searchTracks(q);
     const tracks = searchData.body.tracks.items.map((item) => ({
       title: item.name,
-      artist: item.artists.map((artist) => artist.name).join(' , '),
+      artist: item.artists.map((a) => a.name).join(' , '),
       album: item.album.name,
-      genre: '',
       spotifyId: item.id,
       coverArt: item.album.images[0].url || ' ',
     }));
 
-    const savedTracks = [];
-    for (const track of tracks) {
+    // add the tracks found to a new documents in our Music model
+    const savedTracksPromises = tracks.map(async (track) => {
       const existingTrack = await Music.findOne({ spotifyId: track.spotifyId });
       if (!existingTrack) {
         const newTrack = new Music({ ...track, owner: req.session.account._id });
         await newTrack.save();
-        savedTracks.push(newTrack);
-      } else {
-        savedTracks.push(existingTrack);
+        return newTrack;
       }
-    }
-    res.json({ savedTracks });
+      return existingTrack;
+    });
+
+    const savedTracks = await Promise.all(savedTracksPromises);
+    return res.json({ savedTracks });
   } catch (err) {
-    return res.status(500).json({ error: `Error searching Spotify ${err}` });
+    return res.status(400).json({ error: `Error searching Spotify ${err}` });
   }
 };
 
-const playTrack = async (req, res) => {
-  const { uri } = req.query;
-  try {
-    await spotifyApi.play({ uris: [uri] });
-    res.send('playback started');
-  } catch (err) {
-    return res.status(500).json({ error: `Error playing ${err}` });
-  }
-};
-
+// export our functions
 module.exports = {
   songPage,
   preferencePage,
@@ -170,5 +131,4 @@ module.exports = {
   spotifyCallBack,
   spotifyLogin,
   searchSpotifyTracks,
-  playTrack,
 };

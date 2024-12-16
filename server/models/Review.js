@@ -1,17 +1,20 @@
 const mongoose = require('mongoose');
-// const _ = require("underscore");
+const _ = require('underscore');
 
-// const setName = (name) => _.escape(name).trim();
+const setName = (name) => _.escape(name).trim();
+
+// Our Review Schema
 
 const ReviewSchema = new mongoose.Schema({
-  user: {
+  owner: {
     type: mongoose.Schema.ObjectId,
-    ref: 'User',
+    ref: 'Account',
     required: true,
+    set: setName,
   },
 
   song: {
-    type: mongoose.Schema.ObjectId,
+    type: String,
     ref: 'Song',
     required: true,
   },
@@ -35,11 +38,10 @@ const ReviewSchema = new mongoose.Schema({
 });
 
 ReviewSchema.statics.toAPI = (doc) => ({
-  user: doc.user,
   song: doc.song,
   reviewText: doc.reviewText,
   rating: doc.rating,
-  createdAt: doc.createdAt,
+  // createdAt: doc.createdAt,
 
 });
 

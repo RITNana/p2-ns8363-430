@@ -6,7 +6,8 @@ module.exports = {
   entry: {
     app: './client/main.jsx',
     login: './client/login.jsx',
-    preference: './client/preferences.jsx'
+    preference: './client/preferences.jsx',
+    review: './client/reviewer.jsx'
   },
   module: {
     rules: [
