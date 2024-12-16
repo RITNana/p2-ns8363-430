@@ -21,15 +21,16 @@ const handleMain = (e, setQuery, triggerReload) => {
     const title = e.target.querySelector('#songTitle').value;
     const artist = e.target.querySelector('#songArtist').value
     const album = e.target.querySelector('#songAlbum').value;
+    const genre = e.target.querySelector('#musicGenre').value
 
 
 
-    if (!title && !artist && !album) {
+    if (!title && !artist && !album && !genre) {
         helper.handleError('At least one field is required')
         return false
     }
 
-    setQuery({ title, artist, album });
+    setQuery({ title, artist, album, genre });
     triggerReload();
     return false;
 
@@ -54,6 +55,8 @@ const HomeForm = (props) => {
             <input id="songArtist" type="text" name="rating" placeholder="Music Artist"></input>
             <label htmlFor="album">Album Song is from: </label>
             <input id="songAlbum" type="text" name="album" placeholder="Song Album"></input>
+            <label htmlFor="genre">Music Genre: </label>
+            <input id="musicGenre" type="text" name="genre" placeholder="Music Genre"></input>
             <input className="makeSongSubmit" type="submit" value="Get Song" />
         </form>
     )
@@ -85,7 +88,6 @@ const MusicList = (props) => {
     }, [props.query, props.reloadSongs])
 
 
-    // attempts for using props param to add songs to a likeSongs array
     const addToLikes = (song) => {
         console.log("Added to Likes: ", song);
         if (props.addToLikes) {
@@ -93,7 +95,6 @@ const MusicList = (props) => {
         }
     }
 
-    // attempts for using props param to add songs to a dislikeSongs array
     const addToDislikes = (song) => {
         console.log("Added to Dislikes: ", song);
         if (props.addToDislikes) {
@@ -110,8 +111,7 @@ const MusicList = (props) => {
         )
     }
 
-    // our music nodes for each song being mapped
-    // utilize our addToLikes and addToDislikes
+    // our music nodes for each
     const musicNodes = songs.map(song => (
         <Song
             key={song.spotifyId}
@@ -132,9 +132,7 @@ const MusicList = (props) => {
 };
 
 
-// set our reviewform state to false (not showing)
-// Don't reveal our reviewForm until the button is clicked to reveal the form
-// Use the same button to close the form as well
+// Manage how the review form is seen and clicked, and when to close form the form
 const Song = ({ song, addToLikes, addToDislikes, reloadSongs }) => {
     const [showReviewForm, setShowReviewForm] = useState(false);
 
@@ -146,13 +144,13 @@ const Song = ({ song, addToLikes, addToDislikes, reloadSongs }) => {
         setShowReviewForm(false);
     };
 
-    // What will be shown on the page for each song returned
     return (
         <div key={song.spotifyId} className="song">
             <img src="/assets/img/spotify.png" alt="spotify icon" className="spotify" />
             <h3 className="songTitle">Song Title: {song.title}</h3>
             <h3 className="songArtist">Song Artist: {song.artist}</h3>
             <h3 className="songAlbum">Song Album: {song.album}</h3>
+            <h3 className="musicGenre">Music Genre: {song.genre}</h3>
             <button onClick={() => addToLikes(song)} className="likeButton" type="button">Add To Likes</button>
             <button onClick={() => addToDislikes(song)} className="dislikeButton" type="button">Add To Dislikes</button>
             <button className="reviewBtn" type="button" onClick={() => handleReviewClick(song)}>Write a Review</button>
@@ -187,7 +185,6 @@ const App = () => {
     )
 }
 
-// on windows onload, let out ap[ be created
 const init = () => {
     const root = createRoot(document.getElementById('app'));
     root.render(<App />)

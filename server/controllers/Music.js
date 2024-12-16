@@ -58,7 +58,7 @@ const spotifyCallBack = async (req, res) => {
   }
 
   try {
-    console.log(`Authorization code received: ${code}`); // required
+    console.log(`Authorization code received: ${code}`);
 
     const data = await spotifyApi.authorizationCodeGrant(code);
     const accessToken = data.body.access_token;
@@ -69,8 +69,11 @@ const spotifyCallBack = async (req, res) => {
     spotifyApi.setRefreshToken(refreshToken);
 
     console.log(`Access Token: ${accessToken}, \n Refresh Token: ${refreshToken}`);
+
+    // Redirect to the main page after setting tokens
     res.redirect('/main');
 
+    // Refresh the access token periodically
     setInterval(async () => {
       const refreshData = await spotifyApi.refreshAccessToken();
       const accessTokenRefreshed = refreshData.body.access_token;
@@ -78,20 +81,23 @@ const spotifyCallBack = async (req, res) => {
     }, (expiresIn / 2) * 1000);
   } catch (err) {
     console.log('Error', err);
+    // Send error response if there's an issue getting tokens
+    return res.status(400).json({ error: 'Error getting tokens!' });
   }
-  return res.status(400).json({ error: 'Error getting tokens!' });
+  return console.log('done');
 };
 
 // search the Spotify API for tracks based on title, artist, or album
 // utilize the searchTracks propety passing in our query params
 const searchSpotifyTracks = async (req, res) => {
   const {
-    title, artist, album,
+    title, artist, album, genre,
   } = req.query;
   let q = '';
   if (title) q += `track:${title} `;
   if (artist) q += `artist:${artist} `;
   if (album) q += `album:${album} `;
+  if (genre) q += `genre${genre}`;
 
   q = q.trim();
 
@@ -101,6 +107,7 @@ const searchSpotifyTracks = async (req, res) => {
       title: item.name,
       artist: item.artists.map((a) => a.name).join(' , '),
       album: item.album.name,
+      genre: '',
       spotifyId: item.id,
       coverArt: item.album.images[0].url || ' ',
     }));

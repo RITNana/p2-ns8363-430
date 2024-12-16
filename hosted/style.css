@@ -341,6 +341,17 @@ h3.songAlbum {
     font-size: 1.2em;
 }
 
+h3.musicGenre {
+    float: left;
+    text-align: left;
+    width: 100px;
+    font-weight: bold;
+    padding-right: 30px;
+    font-size: 1.2em;
+}
+
+
+
 .likeButton {
     float: left;
     width: 100px;

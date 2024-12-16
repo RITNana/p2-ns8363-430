@@ -3,7 +3,7 @@ const _ = require('underscore');
 
 const setName = (name) => _.escape(name).trim();
 
-// Our Music Schema
+// Music Schema
 
 const MusicSchema = new mongoose.Schema({
   title: {
@@ -19,6 +19,12 @@ const MusicSchema = new mongoose.Schema({
   },
 
   album: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+
+  genre: {
     type: String,
     required: false,
     trim: true,
@@ -46,6 +52,7 @@ MusicSchema.statics.toAPI = (doc) => ({
   title: doc.title,
   artist: doc.artist,
   album: doc.album,
+  genre: doc.genre,
   spotifyId: doc.spotifyId,
   coverArt: doc.coverArt,
 });

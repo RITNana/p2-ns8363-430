@@ -1,27 +1,25 @@
-// **ATTEMPTED to create a Reviews Page for seeing song reviews
-
 const helper = require('./helper.js');
 const React = require('react');
 const { useState, useEffect } = React;
 const { createRoot } = require('react-dom/client');
 
-// No reloads when submitting a new review
+// Dont reload page for contents from review form
 const ReviewForm = (props) => {
     const handleReview = (e) => {
         e.preventDefault();
         props.triggerReload();
         props.closeForm();
     }
-    // The Review Form
+    // Review form view
     return (
-        <form id="reviewForm"
+        <form id="reviewForm" 
             className="reviewPopup"
             name="reviewForm"
             onSubmit={handleReview}
             action="/reviews"
             method="POST">
             <div className="popup-inner"></div>
-            <br /> <br />
+            <br/> <br />
             <label htmlFor="song">Song: </label>
             <input id="songName" type="text" name="song" placeholder="Song Name"></input>
             <br /><br />
@@ -36,29 +34,28 @@ const ReviewForm = (props) => {
     )
 }
 
-// export reviewForm so it may be used in main.jsx as a popup window
 export default ReviewForm
 
-const ReviewList = (props) => {
+// The list thaty houses our reviews from songs
+const ReviewList = ( props ) => {
     const [reviews, setReviews] = useState([props.reviews]);
 
     useEffect(() => {
         const loadReviewsFromServer = async () => {
-            try {
-                const response = await fetch('/getReviews');
-                const data = await response.json();
-                console.log('Fetched reviews from server: ', data.reviews)
-                setReviews(data.reviews)
-            } catch (err) {
+            try{
+            const response = await fetch('/getReviews');
+            const data = await response.json();
+            console.log('Fetched reviews from server: ', data.reviews)
+            setReviews(data.reviews)
+            } catch (err){
                 console.err('Error fetching reviews', err);
             }
         }
         loadReviewsFromServer();
     }, [props.reloadReviews])
 
-    // handling edits for written reviews, attempted to use PUT HTTP Command
     const handleReviewEdits = async (id, reviewText, rating) => {
-        try {
+        try{
             const response = await fetch(`/editReview/${id}`, {
                 method: 'PUT',
                 headers: {
@@ -67,15 +64,14 @@ const ReviewList = (props) => {
                 body: JSON.stringify({ id, reviewText, rating })
             })
             const result = await response.json();
-            setReviews(reviews.map((review) => review._id === id ? result : review))
+            setReviews(reviews.map((review) => review._id === id ? result: review))
         } catch (err) {
             console.log("error editing review ", err)
         }
     };
 
-    // handling deletes for written reviews, attempted to use PUT HTTP Command
-    const handleDeleteEdits = async (id) => {
-        try {
+    const handleDeleteEdits = async(id) => {
+        try{
             const response = await fetch(`/deleteReview/${id}`, {
                 method: 'DELETE',
                 headers: {
@@ -85,12 +81,11 @@ const ReviewList = (props) => {
             const result = await response.json();
             console.log("Deleted Result: ", result)
             setReviews(reviews.filter((review) => review._id !== id))
-        } catch (err) {
+        } catch (err){
             console.log("Error deleting review ", err)
         }
     }
 
-    // if no reviews, make sure it is known
     if (reviews.length === 0) {
         return (
             <div className="reviewList">
@@ -99,7 +94,6 @@ const ReviewList = (props) => {
         );
     }
 
-    // the format for every single review node
     const reviewNodes = reviews.map((review) => {
         return (
             <div key={review._id} className="review">
@@ -120,8 +114,6 @@ const ReviewList = (props) => {
 
 }
 
-// set the state for reviews and when clicked to make a review, populate review
-// populate all reviews too
 const Review = () => {
     const [reloadReviews, setReloadReviews] = useState(false)
 
